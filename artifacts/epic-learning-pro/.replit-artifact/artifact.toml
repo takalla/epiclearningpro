@@ -1,0 +1,28 @@
+kind = "web"
+previewPath = "/"
+title = "Epic Learning Pro"
+description = "A modern, high-converting single-page marketing website for Epic Learning Pro — a family-run education, coaching, and professional development company. Features smooth scrolling, real testimonials, team photos, service sections, FAQ, and a gold spark particle click effect."
+version = "1.0.0"
+id = "artifacts/epic-learning-pro"
+router = "path"
+
+[[services]]
+name = "web"
+paths = [ "/" ]
+localPort = 21603
+
+[services.development]
+run = "pnpm --filter @workspace/epic-learning-pro run dev"
+
+[services.production]
+build = [ "pnpm", "--filter", "@workspace/epic-learning-pro", "run", "build" ]
+serve = "static"
+publicDir = "artifacts/epic-learning-pro/dist/public"
+
+[[services.production.rewrites]]
+from = "/*"
+to = "/index.html"
+
+[services.env]
+PORT = "21603"
+BASE_PATH = "/"

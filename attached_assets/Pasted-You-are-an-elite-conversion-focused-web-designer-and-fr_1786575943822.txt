@@ -1,0 +1,78 @@
+You are an elite conversion-focused web designer and frontend developer who builds clean, modern, high-converting websites for coaches, educators, and service-based businesses. You specialize in mobile-first design, strong visual hierarchy, subtle but memorable interactions, and professional aesthetics that feel warm, elevated, and current — never template-y or stuck in the past.
+
+### PROJECT
+Build a complete, modern single-page website (with smooth scrolling) for **Epic Learning Pro**.
+
+Primary goal of the site: Make visitors feel understood and inspired, clearly show the transformation available, and drive them to contact Olivia.
+
+Core brand energy: “Imagine. Believe. Achieve.” Practical, encouraging, experienced (30+ years), family-run, results-oriented education and coaching.
+
+### ASSETS
+I have uploaded:
+- A Word document containing the existing copy from the old site + real Alignable recommendations/reviews
+- The logo file
+
+Use the uploaded logo for the header, favicon, and footer.  
+Do **not** invent a new logo.  
+Do **not** look at or reference any external URL of the old website. Work only from the uploaded Word document and the instructions in this prompt.
+
+### COPY HANDLING RULES
+- Extract the best existing copy from the Word document and intelligently place it into the modern section structure below.
+- Rewrite and reorganize only as needed for clarity, flow, and modern readability — keep Olivia’s voice, key phrases, and spirit intact.
+- Where a section needs supporting copy that doesn’t cleanly exist, generate short, on-brand copy that matches the motivational + practical tone (“Imagine. Believe. Achieve,” transformation, experience, encouragement). Keep generated copy concise.
+- For social proof: only use the real Alignable recommendations provided in the Word doc. Do not invent testimonials.
+- Do not make the site feel like a 2012 brochure. Modern hierarchy and brevity win.
+
+### SITE STRUCTURE & SECTION GOALS
+Build these sections in this order on one long-scrolling homepage:
+
+1. **Sticky Header**  
+   Logo + clean navigation links + primary CTA button.
+
+2. **Hero**  
+   Goal: Immediately communicate who this is for and the big transformation (“making good lives great”). Create emotional pull with the “Imagine. Believe. Achieve” energy and a clear primary CTA.
+
+3. **Problem / Agitate**  
+   Goal: Name the real frustrations her clients feel (overwhelmed parents, underperforming teams, people stuck without credentials, messy professional communication, etc.) so the visitor feels understood.
+
+4. **Solution / Offer**  
+   Goal: Clearly present the three main pillars (Consulting & Coaching, Professional Seminars, Proofreading & Editing) as the practical path from stuck to achieving. Make the services feel modern and results-oriented.
+
+5. **Social Proof**  
+   Goal: Build instant trust using the real Alignable recommendations and experience markers (30+ years, certified educators, family-run reliability).
+
+6. **About**  
+   Goal: Humanize Olivia and the small team. Show heart + credibility without a long bio wall. Reinforce the core promise.
+
+7. **FAQ**  
+   Goal: Handle the most common practical questions and soft objections so friction drops.
+
+8. **Final CTA**  
+   Goal: One clear, warm, low-pressure next step. Reiterate the core promise and make contacting her feel easy and inviting.
+
+9. **Footer**  
+   - Logo that, when clicked, smoothly scrolls the user back to the top of the page  
+   - Copyright 2026 © Epic Learning Pro  
+   - “Website Design by Clique Studios IO” linking to https://cliquestudios.io  
+   - Keep the footer clean and minimal
+
+### DESIGN & UNIQUENESS REQUIREMENTS
+- Fully mobile-optimized and responsive
+- Modern, clean, warm, slightly elevated aesthetic
+- Strong visual hierarchy and generous but intentional spacing
+- Something non-generic and interesting: subtle scroll reveals, smooth micro-interactions, interesting hover states on service cards, or a distinctive hero treatment so the site feels alive and current rather than static
+- **Add a subtle, elegant gold spark particle effect that appears briefly when the user clicks anywhere on the page.** Keep it light, premium, and tasteful — a small spark of inspiration, not a loud or distracting effect.
+- Professional typography and color use that supports the motivational + trustworthy energy
+- Favicon using the uploaded logo
+
+### TECHNICAL REQUIREMENTS
+- Semantic HTML and proper heading hierarchy for SEO
+- Placeholder meta title and meta description (I’ll refine later)
+- Alt text on images
+- Smooth scrolling between sections
+- Clean, modern code (prefer Tailwind if it fits well)
+- Leave a clear HTML comment in the `<head>` as a placeholder for Plausible Analytics (I’ll add the actual script later)
+
+### PROCESS
+Before you write any code, ask me any clarifying questions you need so the first version is as strong as possible.  
+Once I answer, build the full homepage structure and design.
