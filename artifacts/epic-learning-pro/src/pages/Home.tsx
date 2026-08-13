@@ -256,14 +256,14 @@ export default function Home() {
         </div>
       </section>
 
-      {/* ── Problem / Agitate — dark midnight purple ── */}
+      {/* ── Problem / Agitate — purple-blue gradient ── */}
       <section className="py-16 md:py-28 relative overflow-hidden"
-        style={{ background: 'linear-gradient(135deg, #0f0b2d 0%, #1a1245 100%)' }}>
+        style={{ background: 'linear-gradient(135deg, #8B5FE6 0%, #36A6DD 100%)' }}>
         {/* Subtle texture orbs */}
         <div className="absolute top-0 right-0 w-96 h-96 rounded-full blur-3xl opacity-20 pointer-events-none"
-          style={{ background: 'radial-gradient(circle, #8B5FE6 0%, transparent 70%)', transform: 'translate(30%, -30%)' }} />
+          style={{ background: 'radial-gradient(ellipse at top right, rgba(202,167,71,0.25) 0%, transparent 60%)' }} />
         <div className="absolute bottom-0 left-0 w-80 h-80 rounded-full blur-3xl opacity-15 pointer-events-none"
-          style={{ background: 'radial-gradient(circle, #36A6DD 0%, transparent 70%)', transform: 'translate(-30%, 30%)' }} />
+          style={{ background: 'radial-gradient(ellipse at bottom left, rgba(255,255,255,0.08) 0%, transparent 60%)' }} />
 
         <div className="container mx-auto px-4 sm:px-6 relative z-10">
           <FadeIn>
@@ -276,13 +276,12 @@ export default function Home() {
           <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-5 max-w-6xl mx-auto">
             {painPoints.map((pain, i) => (
               <FadeIn key={i} delay={0.07 * i} direction="up">
-                <div className="rounded-2xl p-6 h-full transition-all duration-300 hover:-translate-y-1 hover:bg-white/10 border border-white/10 bg-white/5">
-                  <div className="h-11 w-11 rounded-full flex items-center justify-center mb-4"
-                    style={{ background: 'rgba(139,95,230,0.25)', color: '#c4a0ff' }}>
+                <div className="rounded-2xl p-6 h-full transition-all duration-300 hover:-translate-y-1 bg-white/10 hover:bg-white/18 border border-white/20">
+                  <div className="h-11 w-11 rounded-full flex items-center justify-center mb-4 bg-white/20 text-white">
                     <pain.icon size={22} />
                   </div>
                   <h3 className="font-semibold text-lg mb-2 text-white">{pain.title}</h3>
-                  <p className="text-white/60 text-sm leading-relaxed">{pain.desc}</p>
+                  <p className="text-white/75 text-sm leading-relaxed">{pain.desc}</p>
                 </div>
               </FadeIn>
             ))}
