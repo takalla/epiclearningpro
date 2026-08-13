@@ -269,6 +269,12 @@ export default function Home() {
 
         <div className="container mx-auto px-4 sm:px-6 relative z-10">
           <div className="max-w-4xl mx-auto text-center">
+            <FadeIn delay={0.05}>
+              <p className="text-2xl sm:text-3xl md:text-4xl font-serif italic mb-4 tracking-wide"
+                style={{ color: '#F0C84A', textShadow: '0 2px 16px rgba(202,167,71,0.45)' }}>
+                Imagine. Believe. Achieve.
+              </p>
+            </FadeIn>
             <FadeIn delay={0.1}>
               <h1 className="text-5xl sm:text-6xl md:text-8xl font-serif font-semibold tracking-tight text-white mb-6 leading-tight">
                 Professional Training{" "}
@@ -277,7 +283,7 @@ export default function Home() {
             </FadeIn>
             <FadeIn delay={0.2}>
               <p className="text-xl sm:text-2xl md:text-3xl text-white/80 mb-10 max-w-3xl mx-auto leading-relaxed">
-                Imagine. Believe. Achieve. With over 30 years of experience, we help individuals and teams transform their potential into tangible results.
+                With over 30 years of experience, we help individuals and teams transform their potential into tangible results.
               </p>
             </FadeIn>
             <FadeIn delay={0.3}>
