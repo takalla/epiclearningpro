@@ -17,8 +17,6 @@ import mikellePath from "@assets/mikelle.cropped_1786576741122.png";
 function useSparks() {
   useEffect(() => {
     const handleMouseClick = (e: MouseEvent) => {
-      const target = e.target as HTMLElement;
-      if (target.closest('button') || target.closest('a') || target.closest('input') || target.closest('textarea') || target.closest('select')) return;
       const { clientX, clientY } = e;
       const numSparks = Math.floor(Math.random() * 8) + 14;
       for (let i = 0; i < numSparks; i++) createSpark(clientX, clientY);
@@ -94,8 +92,56 @@ export default function Home() {
   const [isScrolled, setIsScrolled] = useState(false);
   const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
 
-  /* ── Testimonial marquee pause ── */
-  const marqueeRef = useRef<HTMLDivElement>(null);
+  /* ── Testimonial marquee ── */
+  const marqueeTrackRef = useRef<HTMLDivElement>(null);
+  const marqueeAnimRef = useRef<Animation | null>(null);
+  const isDraggingRef = useRef(false);
+  const isHoveredRef = useRef(false);
+
+  useEffect(() => {
+    const el = marqueeTrackRef.current;
+    if (!el) return;
+    const t = setTimeout(() => { marqueeAnimRef.current = el.getAnimations()[0] ?? null; }, 150);
+    return () => clearTimeout(t);
+  }, []);
+
+  const pauseMarquee = () => {
+    isHoveredRef.current = true;
+    marqueeAnimRef.current?.pause();
+  };
+  const resumeMarquee = () => {
+    isHoveredRef.current = false;
+    if (!isDraggingRef.current) marqueeAnimRef.current?.play();
+  };
+  const handleMarqueeDrag = (startClientX: number) => {
+    const anim = marqueeAnimRef.current;
+    const el = marqueeTrackRef.current;
+    if (!anim || !el) return;
+    anim.pause();
+    isDraggingRef.current = true;
+    const startTime = (anim.currentTime as number) ?? 0;
+    const totalDuration = 40000;
+    const pxPerMs = (el.scrollWidth / 2) / totalDuration;
+    const onMove = (ev: MouseEvent | TouchEvent) => {
+      const cx = 'touches' in ev ? ev.touches[0].clientX : (ev as MouseEvent).clientX;
+      const delta = cx - startClientX;
+      let t = startTime - delta / pxPerMs;
+      t = ((t % totalDuration) + totalDuration) % totalDuration;
+      anim.currentTime = t;
+    };
+    const onEnd = () => {
+      isDraggingRef.current = false;
+      if (!isHoveredRef.current) anim.play();
+      window.removeEventListener('mousemove', onMove);
+      window.removeEventListener('mouseup', onEnd);
+      window.removeEventListener('touchmove', onMove);
+      window.removeEventListener('touchend', onEnd);
+    };
+    window.addEventListener('mousemove', onMove);
+    window.addEventListener('mouseup', onEnd);
+    window.addEventListener('touchmove', onMove, { passive: true });
+    window.addEventListener('touchend', onEnd);
+  };
 
   /* ── Contact form ── */
   const [form, setForm] = useState({ firstName: '', lastName: '', email: '', phone: '', service: '', message: '' });
@@ -174,7 +220,7 @@ export default function Home() {
           <nav className="hidden md:flex items-center gap-6 lg:gap-8">
             {navLinks.map(link => (
               <button key={link.name} onClick={() => scrollTo(link.id)} data-testid={`link-nav-${link.id}`}
-                className={`text-sm font-medium transition-colors outline-none ${isScrolled ? "text-muted-foreground hover:text-primary" : "text-white/80 hover:text-white"}`}>
+                className={`text-base font-medium transition-colors outline-none ${isScrolled ? "text-muted-foreground hover:text-primary" : "text-white/80 hover:text-white"}`}>
                 {link.name}
               </button>
             ))}
@@ -251,7 +297,7 @@ export default function Home() {
       </section>
 
       {/* ── Problem / Agitate — soft lavender tint ── */}
-      <section className="py-16 md:py-28" style={{ background: '#f2eeff' }}>
+      <section className="py-16 md:py-28" style={{ background: 'linear-gradient(135deg, #f0eaff 0%, #e8f5ff 100%)' }}>
         <div className="container mx-auto px-4 sm:px-6">
           <FadeIn>
             <div className="text-center max-w-3xl mx-auto mb-12 md:mb-16">
@@ -400,21 +446,23 @@ export default function Home() {
           {/* Infinite marquee track */}
           <FadeIn delay={0.1}>
             <div
-              className="overflow-hidden"
+              className="overflow-hidden cursor-grab active:cursor-grabbing"
               style={{
                 maskImage: 'linear-gradient(to right, transparent 0%, black 8%, black 92%, transparent 100%)',
                 WebkitMaskImage: 'linear-gradient(to right, transparent 0%, black 8%, black 92%, transparent 100%)',
               }}
+              onMouseEnter={pauseMarquee}
+              onMouseLeave={resumeMarquee}
+              onMouseDown={e => handleMarqueeDrag(e.clientX)}
+              onTouchStart={e => handleMarqueeDrag(e.touches[0].clientX)}
             >
               <div
-                ref={marqueeRef}
-                className="flex gap-5"
+                ref={marqueeTrackRef}
+                className="flex gap-5 pointer-events-none"
                 style={{
                   width: 'max-content',
                   animation: 'marquee-scroll 40s linear infinite',
                 }}
-                onMouseEnter={e => { (e.currentTarget as HTMLDivElement).style.animationPlayState = 'paused'; }}
-                onMouseLeave={e => { (e.currentTarget as HTMLDivElement).style.animationPlayState = 'running'; }}
               >
                 {[...testimonials, ...testimonials].map((t, i) => (
                   <div key={i} className="w-[300px] sm:w-[350px] flex-shrink-0">
@@ -451,7 +499,7 @@ export default function Home() {
                 ))}
               </div>
             </div>
-            <p className="text-center text-white/45 text-sm mt-6 tracking-wide">hover to pause</p>
+            <p className="text-center text-white/45 text-sm mt-6 tracking-wide">drag or hover to control</p>
           </FadeIn>
         </div>
       </section>
@@ -513,16 +561,16 @@ export default function Home() {
         </div>
       </section>
 
-      {/* ── FAQ — deep navy ── */}
+      {/* ── FAQ — warm brand gradient ── */}
       <section id="faq" className="py-16 md:py-28 relative overflow-hidden"
-        style={{ background: 'linear-gradient(135deg, #0d2347 0%, #1a3a6e 100%)' }}>
+        style={{ background: 'linear-gradient(135deg, #fdf7ee 0%, #f4efff 50%, #edf6ff 100%)' }}>
         <div className="absolute inset-0 pointer-events-none"
-          style={{ background: 'radial-gradient(ellipse at top right, rgba(54,166,221,0.2) 0%, transparent 60%)' }} />
+          style={{ background: 'radial-gradient(ellipse at top right, rgba(139,95,230,0.08) 0%, transparent 60%)' }} />
 
         <div className="container mx-auto px-4 sm:px-6 max-w-3xl relative z-10">
           <FadeIn className="text-center mb-10 md:mb-14">
-            <h2 className="text-3xl md:text-5xl font-serif font-semibold mb-4 text-white">Common Questions</h2>
-            <p className="text-lg md:text-xl text-white/65">Everything you need to know about working with us.</p>
+            <h2 className="text-3xl md:text-5xl font-serif font-semibold mb-4 text-foreground">Common Questions</h2>
+            <p className="text-lg md:text-xl text-muted-foreground">Everything you need to know about working with us.</p>
           </FadeIn>
 
           <FadeIn delay={0.2}>
@@ -539,11 +587,11 @@ export default function Home() {
                 { q: "How do I get started?",
                   a: "The first step is a simple conversation. Fill out the form below or reach out to us directly. From there, we'll discuss your needs and craft a written proposal outlining the strategy, timeline, and pricing — with no pressure and no commitment until you're ready." },
               ].map((item, i) => (
-                <AccordionItem key={i} value={`item-${i}`} className="bg-white/10 backdrop-blur-sm border border-white/15 rounded-xl px-5 py-1 shadow-sm">
-                  <AccordionTrigger className="text-lg sm:text-xl font-medium hover:no-underline text-white hover:text-white/80 transition-colors text-left py-4 [&>svg]:text-white/60">
+                <AccordionItem key={i} value={`item-${i}`} className="bg-white/80 backdrop-blur-sm border border-primary/10 rounded-xl px-5 py-1 shadow-sm">
+                  <AccordionTrigger className="text-lg sm:text-xl font-medium hover:no-underline text-foreground hover:text-primary transition-colors text-left py-4 [&>svg]:text-muted-foreground">
                     {item.q}
                   </AccordionTrigger>
-                  <AccordionContent className="text-white/70 text-base sm:text-lg pt-1 pb-4 leading-relaxed">
+                  <AccordionContent className="text-muted-foreground text-base sm:text-lg pt-1 pb-4 leading-relaxed">
                     {item.a}
                   </AccordionContent>
                 </AccordionItem>
@@ -676,23 +724,23 @@ export default function Home() {
       </section>
 
       {/* ── Footer ── */}
-      <footer className="bg-foreground text-background py-10 sm:py-12">
+      <footer className="py-10 sm:py-12" style={{ background: 'linear-gradient(135deg, #f0eaff 0%, #e8f5ff 100%)' }}>
         <div className="container mx-auto px-4 sm:px-6">
           <div className="flex flex-col sm:flex-row items-center justify-between gap-5 mb-7">
             <button onClick={() => window.scrollTo({ top: 0, behavior: 'smooth' })}
               className="flex items-center gap-3 outline-none hover:opacity-80 transition-opacity" data-testid="button-footer-home">
-              <img src={logoPath} alt="Logo" className="h-9 w-9 rounded-full bg-white p-1" />
-              <span className="font-serif font-semibold text-lg tracking-tight">Epic Learning Pro</span>
+              <img src={logoPath} alt="Logo" className="h-9 w-9 rounded-full bg-white shadow-sm p-1" />
+              <span className="font-serif font-semibold text-lg tracking-tight text-foreground">Epic Learning Pro</span>
             </button>
-            <div className="flex items-center gap-5 text-sm text-muted/80">
-              <a href="https://www.alignable.com/paulden-az/epic-learning-pro" target="_blank" rel="noopener noreferrer" className="hover:text-white transition-colors">Alignable</a>
-              <a href="mailto:contact@epiclearningpro.com" className="hover:text-white transition-colors">Email</a>
+            <div className="flex items-center gap-5 text-sm text-muted-foreground">
+              <a href="https://www.alignable.com/paulden-az/epic-learning-pro" target="_blank" rel="noopener noreferrer" className="hover:text-primary transition-colors">Alignable</a>
+              <a href="mailto:contact@epiclearningpro.com" className="hover:text-primary transition-colors">Email</a>
             </div>
           </div>
-          <div className="border-t border-white/10 pt-7 flex flex-col sm:flex-row items-center justify-between gap-3 text-sm text-muted/60">
+          <div className="border-t border-primary/15 pt-7 flex flex-col sm:flex-row items-center justify-between gap-3 text-sm text-muted-foreground">
             <p>Copyright 2026 © Epic Learning Pro. All rights reserved.</p>
             <p>Website Design by{' '}
-              <a href="https://cliquestudios.io" target="_blank" rel="noopener noreferrer" className="text-white hover:text-primary transition-colors">Clique Studios IO</a>
+              <a href="https://cliquestudios.io" target="_blank" rel="noopener noreferrer" className="text-primary hover:text-primary/70 transition-colors">Clique Studios IO</a>
             </p>
           </div>
         </div>
