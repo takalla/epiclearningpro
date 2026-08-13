@@ -2,7 +2,7 @@ import { useState, useEffect, useRef } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
 import {
   Menu, X, ArrowRight, BookOpen, Star, Mail, CheckCircle2,
-  MessageCircle, Users, FileEdit, Award, ChevronLeft, ChevronRight,
+  MessageCircle, Users, FileEdit, Award,
   Send, Phone, Target, Quote
 } from 'lucide-react';
 import { Button } from '@/components/ui/button';
@@ -20,18 +20,19 @@ function useSparks() {
       const target = e.target as HTMLElement;
       if (target.closest('button') || target.closest('a') || target.closest('input') || target.closest('textarea') || target.closest('select')) return;
       const { clientX, clientY } = e;
-      const numSparks = Math.floor(Math.random() * 5) + 8;
+      const numSparks = Math.floor(Math.random() * 8) + 14;
       for (let i = 0; i < numSparks; i++) createSpark(clientX, clientY);
     };
     const createSpark = (x: number, y: number) => {
       const spark = document.createElement("div");
-      spark.className = "fixed pointer-events-none rounded-full bg-[#CAA747] z-[9999]";
-      spark.style.cssText = `width:4px;height:4px;left:${x}px;top:${y}px`;
+      const size = Math.random() * 5 + 5; // 5–10px
+      spark.className = "fixed pointer-events-none rounded-full z-[9999]";
+      spark.style.cssText = `width:${size}px;height:${size}px;left:${x}px;top:${y}px;background:radial-gradient(circle, #FFD966 0%, #CAA747 60%, #b8892a 100%);box-shadow:0 0 6px 2px rgba(202,167,71,0.7)`;
       const angle = Math.random() * Math.PI * 2;
-      const velocity = Math.random() * 60 + 30;
-      const duration = Math.random() * 500 + 500;
+      const velocity = Math.random() * 90 + 55;
+      const duration = Math.random() * 600 + 600;
       spark.animate(
-        [{ transform: 'translate(0,0) scale(1)', opacity: 0.8 },
+        [{ transform: 'translate(0,0) scale(1)', opacity: 1 },
          { transform: `translate(${Math.cos(angle) * velocity}px,${Math.sin(angle) * velocity}px) scale(0)`, opacity: 0 }],
         { duration, easing: 'cubic-bezier(0.25,1,0.5,1)', fill: 'forwards' }
       );
@@ -93,22 +94,8 @@ export default function Home() {
   const [isScrolled, setIsScrolled] = useState(false);
   const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
 
-  /* ── Testimonial scroll ── */
-  const scrollRef = useRef<HTMLDivElement>(null);
-  const [scrollPos, setScrollPos] = useState({ canLeft: false, canRight: true });
-
-  const updateScrollState = () => {
-    const el = scrollRef.current;
-    if (!el) return;
-    setScrollPos({ canLeft: el.scrollLeft > 4, canRight: el.scrollLeft < el.scrollWidth - el.clientWidth - 4 });
-  };
-
-  const nudge = (dir: 1 | -1) => {
-    const el = scrollRef.current;
-    if (!el) return;
-    const card = el.querySelector('[data-card]') as HTMLElement | null;
-    el.scrollBy({ left: dir * ((card?.offsetWidth ?? 320) + 16), behavior: 'smooth' });
-  };
+  /* ── Testimonial marquee pause ── */
+  const marqueeRef = useRef<HTMLDivElement>(null);
 
   /* ── Contact form ── */
   const [form, setForm] = useState({ firstName: '', lastName: '', email: '', phone: '', service: '', message: '' });
@@ -172,29 +159,38 @@ export default function Home() {
   const inputError = "border-red-300/70 focus:ring-red-300/50";
 
   return (
-    <div className="min-h-screen bg-background text-foreground font-sans selection:bg-primary/20 selection:text-primary">
+    <div className="min-h-screen bg-background text-foreground font-sans select-none">
 
       {/* ── Sticky Header ── */}
       <header className={`fixed top-0 w-full z-50 transition-all duration-300 ${isScrolled ? "bg-white/90 backdrop-blur-md shadow-sm border-b border-border/50 py-3" : "bg-transparent py-5"}`}>
         <div className="container mx-auto px-4 sm:px-6 flex items-center justify-between">
           <button onClick={() => scrollTo('hero')} className="flex items-center gap-2 group outline-none" data-testid="link-logo-home">
             <img src={logoPath} alt="Epic Learning Pro Logo" className="h-10 w-10 sm:h-12 sm:w-12 rounded-full shadow-sm transition-transform duration-300 group-hover:scale-105" />
-            <span className="font-serif font-semibold text-base sm:text-xl tracking-tight text-foreground transition-colors group-hover:text-primary hidden sm:block">Epic Learning Pro</span>
+            <span className={`font-serif font-semibold text-base sm:text-xl tracking-tight transition-colors hidden sm:block ${isScrolled ? "text-foreground hover:text-primary" : "text-white/90 hover:text-white"}`}>
+              Epic Learning Pro
+            </span>
           </button>
 
           <nav className="hidden md:flex items-center gap-6 lg:gap-8">
             {navLinks.map(link => (
               <button key={link.name} onClick={() => scrollTo(link.id)} data-testid={`link-nav-${link.id}`}
-                className="text-sm font-medium text-muted-foreground hover:text-primary transition-colors outline-none relative after:absolute after:bottom-0 after:left-0 after:h-[2px] after:w-full after:origin-bottom-right after:scale-x-0 after:bg-primary after:transition-transform after:duration-300 hover:after:origin-bottom-left hover:after:scale-x-100">
+                className={`text-sm font-medium transition-colors outline-none ${isScrolled ? "text-muted-foreground hover:text-primary" : "text-white/80 hover:text-white"}`}>
                 {link.name}
               </button>
             ))}
-            <Button onClick={() => scrollTo('contact')} className="rounded-full shadow-md hover:shadow-lg transition-all" data-testid="button-header-cta">
-              Let's Connect
-            </Button>
+            {isScrolled ? (
+              <Button onClick={() => scrollTo('contact')} className="rounded-full shadow-md hover:shadow-lg transition-all" data-testid="button-header-cta">
+                Let's Connect
+              </Button>
+            ) : (
+              <button onClick={() => scrollTo('contact')} data-testid="button-header-cta"
+                className="rounded-full px-5 py-2 text-sm font-semibold bg-white/20 text-white border border-white/30 hover:bg-white/30 transition-all">
+                Let's Connect
+              </button>
+            )}
           </nav>
 
-          <button className="md:hidden p-2 text-foreground" onClick={() => setMobileMenuOpen(!mobileMenuOpen)} data-testid="button-mobile-menu">
+          <button className={`md:hidden p-2 ${isScrolled ? "text-foreground" : "text-white"}`} onClick={() => setMobileMenuOpen(!mobileMenuOpen)} data-testid="button-mobile-menu">
             {mobileMenuOpen ? <X size={24} /> : <Menu size={24} />}
           </button>
         </div>
@@ -215,80 +211,71 @@ export default function Home() {
         </AnimatePresence>
       </header>
 
-      {/* ── Hero ── */}
-      <section id="hero" className="relative pt-32 pb-20 md:pt-48 md:pb-32 flex items-center min-h-[90svh] overflow-hidden"
-        style={{ background: 'linear-gradient(145deg, #f3eeff 0%, #ffffff 45%, #e8f6ff 100%)' }}>
-        {/* Coloured orbs */}
-        <div className="absolute top-0 right-0 w-[700px] h-[700px] rounded-full opacity-30 blur-3xl pointer-events-none"
-          style={{ background: 'radial-gradient(circle, #8B5FE6 0%, transparent 70%)', transform: 'translate(30%, -20%)' }} />
-        <div className="absolute bottom-0 left-0 w-[500px] h-[500px] rounded-full opacity-20 blur-3xl pointer-events-none"
-          style={{ background: 'radial-gradient(circle, #36A6DD 0%, transparent 70%)', transform: 'translate(-30%, 30%)' }} />
-        <div className="absolute top-1/2 left-1/2 w-[300px] h-[300px] rounded-full opacity-15 blur-3xl pointer-events-none"
-          style={{ background: 'radial-gradient(circle, #CAA747 0%, transparent 70%)', transform: 'translate(-50%, -50%)' }} />
+      {/* ── Hero — purple-blue gradient ── */}
+      <section id="hero" className="relative flex items-center h-svh overflow-hidden"
+        style={{ background: 'linear-gradient(135deg, #8B5FE6 0%, #36A6DD 100%)' }}>
+        {/* Decorative overlays */}
+        <div className="absolute inset-0 pointer-events-none"
+          style={{ background: 'radial-gradient(ellipse at top right, rgba(202,167,71,0.2) 0%, transparent 55%)' }} />
+        <div className="absolute inset-0 pointer-events-none"
+          style={{ background: 'radial-gradient(ellipse at bottom left, rgba(255,255,255,0.1) 0%, transparent 55%)' }} />
 
         <div className="container mx-auto px-4 sm:px-6 relative z-10">
           <div className="max-w-4xl mx-auto text-center">
             <FadeIn delay={0.1}>
-              <h1 className="text-4xl sm:text-5xl md:text-7xl font-serif font-semibold tracking-tight text-foreground mb-6 leading-tight">
+              <h1 className="text-5xl sm:text-6xl md:text-8xl font-serif font-semibold tracking-tight text-white mb-6 leading-tight">
                 Professional Training{" "}
-                <span className="text-transparent bg-clip-text bg-gradient-to-r from-primary to-secondary">&amp; Services</span>
+                <span className="text-white/80">&amp; Services</span>
               </h1>
             </FadeIn>
             <FadeIn delay={0.2}>
-              <p className="text-lg sm:text-xl md:text-2xl text-muted-foreground mb-8 max-w-2xl mx-auto leading-relaxed">
+              <p className="text-xl sm:text-2xl md:text-3xl text-white/80 mb-10 max-w-3xl mx-auto leading-relaxed">
                 Imagine. Believe. Achieve. With over 30 years of experience, we help individuals and teams transform their potential into tangible results.
               </p>
             </FadeIn>
             <FadeIn delay={0.3}>
               <div className="flex flex-col sm:flex-row items-center justify-center gap-4">
-                <Button size="lg" onClick={() => scrollTo('contact')} data-testid="button-hero-cta"
-                  className="rounded-full w-full sm:w-auto text-base h-14 px-8 shadow-lg hover:shadow-primary/30 transition-all group">
+                <button onClick={() => scrollTo('contact')} data-testid="button-hero-cta"
+                  className="inline-flex items-center justify-center gap-2 rounded-full w-full sm:w-auto text-base h-14 px-8 bg-white text-primary font-semibold shadow-lg hover:bg-white/90 hover:scale-105 transition-all group">
                   Start Your Journey
-                  <ArrowRight className="ml-2 h-4 w-4 transition-transform group-hover:translate-x-1" />
-                </Button>
-                <Button size="lg" variant="outline" onClick={() => scrollTo('services')} data-testid="button-hero-explore"
-                  className="rounded-full w-full sm:w-auto text-base h-14 px-8">
+                  <ArrowRight className="h-4 w-4 transition-transform group-hover:translate-x-1" />
+                </button>
+                <button onClick={() => scrollTo('services')} data-testid="button-hero-explore"
+                  className="inline-flex items-center justify-center rounded-full w-full sm:w-auto text-base h-14 px-8 bg-white/15 text-white font-semibold border border-white/30 hover:bg-white/25 transition-all">
                   Explore Services
-                </Button>
+                </button>
               </div>
             </FadeIn>
           </div>
         </div>
       </section>
 
-      {/* ── Problem / Agitate — purple-blue gradient ── */}
-      <section className="py-16 md:py-28 relative overflow-hidden"
-        style={{ background: 'linear-gradient(135deg, #8B5FE6 0%, #36A6DD 100%)' }}>
-        {/* Subtle texture orbs */}
-        <div className="absolute top-0 right-0 w-96 h-96 rounded-full blur-3xl opacity-20 pointer-events-none"
-          style={{ background: 'radial-gradient(ellipse at top right, rgba(202,167,71,0.25) 0%, transparent 60%)' }} />
-        <div className="absolute bottom-0 left-0 w-80 h-80 rounded-full blur-3xl opacity-15 pointer-events-none"
-          style={{ background: 'radial-gradient(ellipse at bottom left, rgba(255,255,255,0.08) 0%, transparent 60%)' }} />
-
-        <div className="container mx-auto px-4 sm:px-6 relative z-10">
+      {/* ── Problem / Agitate — soft lavender tint ── */}
+      <section className="py-16 md:py-28" style={{ background: '#f2eeff' }}>
+        <div className="container mx-auto px-4 sm:px-6">
           <FadeIn>
             <div className="text-center max-w-3xl mx-auto mb-12 md:mb-16">
-              <h2 className="text-3xl md:text-4xl font-serif font-semibold mb-4 text-white">Feeling stuck or overwhelmed?</h2>
-              <p className="text-lg text-white/65">You are not alone. Whether you're an individual facing a hurdle or a team struggling to connect, the path forward isn't always clear.</p>
+              <h2 className="text-3xl md:text-5xl font-serif font-semibold mb-4 text-foreground">Feeling stuck or overwhelmed?</h2>
+              <p className="text-lg md:text-xl text-muted-foreground">You are not alone. Whether you're an individual facing a hurdle or a team struggling to connect, the path forward isn't always clear.</p>
             </div>
           </FadeIn>
 
           <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-5 max-w-6xl mx-auto">
             {painPoints.map((pain, i) => (
               <FadeIn key={i} delay={0.07 * i} direction="up">
-                <div className="rounded-2xl p-6 h-full transition-all duration-300 hover:-translate-y-1 bg-white/10 hover:bg-white/18 border border-white/20">
-                  <div className="h-11 w-11 rounded-full flex items-center justify-center mb-4 bg-white/20 text-white">
+                <div className="bg-white rounded-2xl p-6 h-full transition-all duration-300 hover:-translate-y-1 border border-primary/10 shadow-sm">
+                  <div className="h-11 w-11 rounded-full bg-primary/10 text-primary flex items-center justify-center mb-4">
                     <pain.icon size={22} />
                   </div>
-                  <h3 className="font-semibold text-lg mb-2 text-white">{pain.title}</h3>
-                  <p className="text-white/75 text-sm leading-relaxed">{pain.desc}</p>
+                  <h3 className="font-semibold text-xl mb-2 text-foreground">{pain.title}</h3>
+                  <p className="text-muted-foreground text-base leading-relaxed">{pain.desc}</p>
                 </div>
               </FadeIn>
             ))}
           </div>
 
           <FadeIn delay={0.5} className="mt-14 text-center">
-            <p className="text-xl font-medium text-white/90 font-serif italic">We see you. We understand. And we know exactly how to help.</p>
+            <p className="text-2xl font-medium text-foreground font-serif italic">We see you. We understand. And we know exactly how to help.</p>
           </FadeIn>
         </div>
       </section>
@@ -299,7 +286,7 @@ export default function Home() {
           <FadeIn className="text-center max-w-3xl mx-auto mb-12 md:mb-20">
             <h2 className="text-sm font-bold tracking-wider text-primary uppercase mb-3">Our Services</h2>
             <h3 className="text-3xl sm:text-4xl md:text-5xl font-serif font-semibold mb-5">Expertise that drives results.</h3>
-            <p className="text-lg text-muted-foreground">From corporate training programs to individual coaching and professional editing, we tailor our approach to your specific goals.</p>
+            <p className="text-lg md:text-xl text-muted-foreground">From corporate training programs to individual coaching and professional editing, we tailor our approach to your specific goals.</p>
           </FadeIn>
 
           <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6 xl:gap-8">
@@ -314,7 +301,7 @@ export default function Home() {
                   <CardDescription className="text-base pt-1">For Businesses & Individuals</CardDescription>
                 </CardHeader>
                 <CardContent className="flex-grow">
-                  <p className="text-muted-foreground mb-5 text-sm leading-relaxed">If your business values progress and proactivity, you need a strong training program. We create exciting educational plans unique to your team's needs. Well-trained, happy people perform better!</p>
+                  <p className="text-muted-foreground mb-5 text-base leading-relaxed">If your business values progress and proactivity, you need a strong training program. We create exciting educational plans unique to your team's needs. Well-trained, happy people perform better!</p>
                   <h4 className="font-semibold text-sm uppercase tracking-wide text-foreground mb-3">Specialties</h4>
                   <ul className="space-y-2">
                     {["Business Training Programs", "Leadership & HR Coaching", "GED Coaching", "Homeschooling & Special Needs"].map((item, i) => (
@@ -341,7 +328,7 @@ export default function Home() {
                   <CardDescription className="text-base pt-1">Transform Your Team</CardDescription>
                 </CardHeader>
                 <CardContent className="flex-grow relative z-10">
-                  <p className="text-muted-foreground mb-5 text-sm leading-relaxed">Improve communication skills, gain expert knowledge, and expand focus with actionable seminars. Topics are matched to your training goals and team's specific interests.</p>
+                  <p className="text-muted-foreground mb-5 text-base leading-relaxed">Improve communication skills, gain expert knowledge, and expand focus with actionable seminars. Topics are matched to your training goals and team's specific interests.</p>
                   <h4 className="font-semibold text-sm uppercase tracking-wide text-foreground mb-3">Popular Topics</h4>
                   <ul className="space-y-2">
                     {["Intuitive Leadership Series", "Confident Communication", "Mental Health for Professionals", "Workflow & Organization"].map((item, i) => (
@@ -368,7 +355,7 @@ export default function Home() {
                   <CardDescription className="text-base pt-1">Polish Your Presence</CardDescription>
                 </CardHeader>
                 <CardContent className="flex-grow">
-                  <p className="text-muted-foreground mb-5 text-sm leading-relaxed">Ensure your company's written communication is flawless. Any professional document will be edited to perfection—accuracy of grammar, punctuation, usage, and context.</p>
+                  <p className="text-muted-foreground mb-5 text-base leading-relaxed">Ensure your company's written communication is flawless. Any professional document will be edited to perfection—accuracy of grammar, punctuation, usage, and context.</p>
                   <h4 className="font-semibold text-sm uppercase tracking-wide text-foreground mb-3">Documents Covered</h4>
                   <ul className="space-y-2">
                     {["Blogs, Newsletters & Emails", "Proposals & Contracts", "Professional Posts", "Essays & Articles"].map((item, i) => (
@@ -399,8 +386,8 @@ export default function Home() {
           {/* Header */}
           <div className="flex flex-col sm:flex-row items-start sm:items-center justify-between mb-10 md:mb-14 gap-6">
             <FadeIn className="max-w-2xl">
-              <h2 className="text-3xl md:text-4xl font-serif font-semibold mb-3 text-white">Trusted by professionals.</h2>
-              <p className="text-lg text-white/70">Real words from real clients about working with Epic Learning Pro.</p>
+              <h2 className="text-3xl md:text-5xl font-serif font-semibold mb-3 text-white">Trusted by professionals.</h2>
+              <p className="text-lg md:text-xl text-white/70">Real words from real clients about working with Epic Learning Pro.</p>
             </FadeIn>
             <FadeIn delay={0.2} direction="left">
               <div className="flex items-center gap-4 bg-white/15 backdrop-blur-sm px-6 py-4 rounded-2xl border border-white/25 shrink-0">
@@ -410,74 +397,61 @@ export default function Home() {
             </FadeIn>
           </div>
 
-          {/* Scroll track */}
+          {/* Infinite marquee track */}
           <FadeIn delay={0.1}>
             <div
-              ref={scrollRef}
-              onScroll={updateScrollState}
-              className="flex gap-5 overflow-x-auto pb-2"
-              style={{ scrollbarWidth: 'none', msOverflowStyle: 'none', WebkitOverflowScrolling: 'touch' }}
+              className="overflow-hidden"
+              style={{
+                maskImage: 'linear-gradient(to right, transparent 0%, black 8%, black 92%, transparent 100%)',
+                WebkitMaskImage: 'linear-gradient(to right, transparent 0%, black 8%, black 92%, transparent 100%)',
+              }}
             >
-              {testimonials.map((t, i) => (
-                <div key={i} data-card className="min-w-[300px] sm:min-w-[340px] max-w-[380px] flex-shrink-0">
-                  {/* Self-contained card — all data inside */}
-                  <div className="bg-white rounded-2xl p-7 h-full flex flex-col shadow-xl">
-                    {/* Top: stars + source */}
-                    <div className="flex items-center justify-between mb-5">
-                      <div className="flex gap-1">
-                        {[...Array(5)].map((_, j) => <Star key={j} size={15} className="text-[#CAA747] fill-[#CAA747]" />)}
+              <div
+                ref={marqueeRef}
+                className="flex gap-5"
+                style={{
+                  width: 'max-content',
+                  animation: 'marquee-scroll 40s linear infinite',
+                }}
+                onMouseEnter={e => { (e.currentTarget as HTMLDivElement).style.animationPlayState = 'paused'; }}
+                onMouseLeave={e => { (e.currentTarget as HTMLDivElement).style.animationPlayState = 'running'; }}
+              >
+                {[...testimonials, ...testimonials].map((t, i) => (
+                  <div key={i} className="w-[300px] sm:w-[350px] flex-shrink-0">
+                    <div className="bg-white rounded-2xl p-7 h-full flex flex-col shadow-xl">
+                      {/* Top: stars + source */}
+                      <div className="flex items-center justify-between mb-5">
+                        <div className="flex gap-1">
+                          {[...Array(5)].map((_, j) => <Star key={j} size={15} className="text-[#CAA747] fill-[#CAA747]" />)}
+                        </div>
+                        <span className="text-[11px] font-medium text-muted-foreground uppercase tracking-wide">Alignable</span>
                       </div>
-                      <span className="text-[11px] font-medium text-muted-foreground uppercase tracking-wide">Alignable</span>
-                    </div>
 
-                    {/* Quote */}
-                    <div className="flex-grow mb-6 relative">
-                      <Quote size={28} className="text-primary/15 absolute -top-1 -left-1 pointer-events-none" />
-                      <p className="text-foreground text-base font-serif italic leading-relaxed pl-5">
-                        {t.text}
-                      </p>
-                    </div>
-
-                    {/* Reviewer */}
-                    <div className="flex items-center gap-3 pt-5 border-t border-border/50">
-                      <div className="h-9 w-9 rounded-full flex items-center justify-center font-bold text-sm shrink-0 text-white"
-                        style={{ background: 'linear-gradient(135deg, #8B5FE6, #36A6DD)' }}>
-                        {t.name.charAt(0)}
+                      {/* Quote */}
+                      <div className="flex-grow mb-6 relative">
+                        <Quote size={28} className="text-primary/15 absolute -top-1 -left-1 pointer-events-none" />
+                        <p className="text-foreground text-base font-serif italic leading-relaxed pl-5">
+                          {t.text}
+                        </p>
                       </div>
-                      <div>
-                        <p className="font-semibold text-foreground text-sm leading-tight">{t.name}</p>
-                        <p className="text-xs text-muted-foreground">Verified Client Review</p>
+
+                      {/* Reviewer */}
+                      <div className="flex items-center gap-3 pt-5 border-t border-border/50">
+                        <div className="h-9 w-9 rounded-full flex items-center justify-center font-bold text-sm shrink-0 text-white"
+                          style={{ background: 'linear-gradient(135deg, #8B5FE6, #36A6DD)' }}>
+                          {t.name.charAt(0)}
+                        </div>
+                        <div>
+                          <p className="font-semibold text-foreground text-sm leading-tight">{t.name}</p>
+                          <p className="text-xs text-muted-foreground">Verified Client Review</p>
+                        </div>
                       </div>
                     </div>
                   </div>
-                </div>
-              ))}
+                ))}
+              </div>
             </div>
-
-            {/* Nav controls — below cards, not overlaid */}
-            <div className="flex items-center justify-center gap-4 mt-8">
-              <button
-                onClick={() => nudge(-1)}
-                data-testid="button-testimonial-prev"
-                disabled={!scrollPos.canLeft}
-                className="h-11 w-11 rounded-full flex items-center justify-center border transition-all duration-200 disabled:opacity-40"
-                style={{ background: 'rgba(255,255,255,0.15)', borderColor: 'rgba(255,255,255,0.3)', color: '#fff' }}
-                aria-label="Scroll left"
-              >
-                <ChevronLeft size={20} />
-              </button>
-              <p className="text-white/60 text-sm">scroll to see more</p>
-              <button
-                onClick={() => nudge(1)}
-                data-testid="button-testimonial-next"
-                disabled={!scrollPos.canRight}
-                className="h-11 w-11 rounded-full flex items-center justify-center border transition-all duration-200 disabled:opacity-40"
-                style={{ background: 'rgba(255,255,255,0.15)', borderColor: 'rgba(255,255,255,0.3)', color: '#fff' }}
-                aria-label="Scroll right"
-              >
-                <ChevronRight size={20} />
-              </button>
-            </div>
+            <p className="text-center text-white/45 text-sm mt-6 tracking-wide">hover to pause</p>
           </FadeIn>
         </div>
       </section>
@@ -493,7 +467,7 @@ export default function Home() {
               <p className="text-xl font-medium text-foreground mb-5 border-l-4 border-accent pl-4">
                 Epic Learning Pro is all about making good lives great!
               </p>
-              <p className="text-lg text-muted-foreground mb-8 leading-relaxed">
+              <p className="text-lg md:text-xl text-muted-foreground mb-8 leading-relaxed">
                 Our certified educators have over 30 years of experience in enlightening minds, providing accurate information, and transforming dreams into reality. Whatever you can imagine, we'll help you achieve!
               </p>
               <div className="bg-white/70 backdrop-blur-sm border border-primary/15 p-6 rounded-2xl shadow-sm relative">
@@ -547,8 +521,8 @@ export default function Home() {
 
         <div className="container mx-auto px-4 sm:px-6 max-w-3xl relative z-10">
           <FadeIn className="text-center mb-10 md:mb-14">
-            <h2 className="text-3xl md:text-4xl font-serif font-semibold mb-4 text-white">Common Questions</h2>
-            <p className="text-lg text-white/65">Everything you need to know about working with us.</p>
+            <h2 className="text-3xl md:text-5xl font-serif font-semibold mb-4 text-white">Common Questions</h2>
+            <p className="text-lg md:text-xl text-white/65">Everything you need to know about working with us.</p>
           </FadeIn>
 
           <FadeIn delay={0.2}>
@@ -566,10 +540,10 @@ export default function Home() {
                   a: "The first step is a simple conversation. Fill out the form below or reach out to us directly. From there, we'll discuss your needs and craft a written proposal outlining the strategy, timeline, and pricing — with no pressure and no commitment until you're ready." },
               ].map((item, i) => (
                 <AccordionItem key={i} value={`item-${i}`} className="bg-white/10 backdrop-blur-sm border border-white/15 rounded-xl px-5 py-1 shadow-sm">
-                  <AccordionTrigger className="text-base sm:text-lg font-medium hover:no-underline text-white hover:text-white/80 transition-colors text-left py-4 [&>svg]:text-white/60">
+                  <AccordionTrigger className="text-lg sm:text-xl font-medium hover:no-underline text-white hover:text-white/80 transition-colors text-left py-4 [&>svg]:text-white/60">
                     {item.q}
                   </AccordionTrigger>
-                  <AccordionContent className="text-white/70 text-sm sm:text-base pt-1 pb-4 leading-relaxed">
+                  <AccordionContent className="text-white/70 text-base sm:text-lg pt-1 pb-4 leading-relaxed">
                     {item.a}
                   </AccordionContent>
                 </AccordionItem>
@@ -591,7 +565,7 @@ export default function Home() {
           <div className="max-w-5xl mx-auto">
             <FadeIn className="text-center mb-10 md:mb-14">
               <h2 className="text-3xl sm:text-4xl md:text-5xl font-serif font-semibold text-white mb-4">Let's work together.</h2>
-              <p className="text-lg sm:text-xl text-white/85 max-w-xl mx-auto font-light leading-relaxed">
+              <p className="text-xl sm:text-2xl text-white/85 max-w-xl mx-auto font-light leading-relaxed">
                 Ready to transform your team or take the next step in your personal journey? We'd love to hear from you.
               </p>
             </FadeIn>
