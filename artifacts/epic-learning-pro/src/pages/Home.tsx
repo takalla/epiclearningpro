@@ -167,7 +167,8 @@ export default function Home() {
     if (Object.keys(errors).length > 0) { setFormErrors(errors); return; }
     setFormErrors({}); setSubmitting(true); setSubmitError('');
     try {
-      const res = await fetch('/api/contact', { method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify(form) });
+      const apiBase = (import.meta.env.VITE_API_URL as string | undefined) ?? '';
+      const res = await fetch(`${apiBase}/api/contact`, { method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify(form) });
       const data = await res.json() as { ok?: boolean; error?: string };
       if (!res.ok || !data.ok) setSubmitError(data.error ?? 'Something went wrong. Please try again or email us directly.');
       else setSubmitted(true);
