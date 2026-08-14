@@ -429,7 +429,7 @@ export default function Home() {
 
       {/* ── Social Proof — rich purple, redesigned cards ── */}
       <section id="social-proof" className="py-16 md:py-28 relative overflow-hidden"
-        style={{ background: 'linear-gradient(150deg, #4a2496 0%, #6b3fbf 40%, #8B5FE6 100%)' }}>
+        style={{ background: 'linear-gradient(150deg, #6b3fbf 0%, #8B5FE6 50%, #7a52d4 100%)' }}>
         <div className="absolute inset-0 pointer-events-none"
           style={{ background: 'radial-gradient(ellipse at top right, rgba(54,166,221,0.25) 0%, transparent 55%)' }} />
         <div className="absolute inset-0 pointer-events-none"
