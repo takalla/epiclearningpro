@@ -199,10 +199,16 @@ export default function Home() {
 
   const scrollTo = (id: string) => {
     setMobileMenuOpen(false);
+    if (id === 'hero') {
+      window.scrollTo({ top: 0, behavior: 'smooth' });
+      return;
+    }
     const el = document.getElementById(id);
-    const headerEl = document.querySelector('header');
-    const offset = headerEl ? headerEl.offsetHeight : 80;
-    if (el) window.scrollTo({ top: el.getBoundingClientRect().top + window.pageYOffset - offset, behavior: "smooth" });
+    if (!el) return;
+    // For every non-hero section the header will be in its compact state (py-3 + h-12 logo ≈ 72px)
+    // by the time the smooth scroll arrives, so use that fixed value.
+    const COMPACT_HEADER_HEIGHT = 72;
+    window.scrollTo({ top: el.getBoundingClientRect().top + window.pageYOffset - COMPACT_HEADER_HEIGHT, behavior: 'smooth' });
   };
 
   const navLinks = [
