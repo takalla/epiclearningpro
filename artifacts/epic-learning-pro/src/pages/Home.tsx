@@ -189,10 +189,20 @@ export default function Home() {
     return () => window.removeEventListener('scroll', onScroll);
   }, []);
 
+  const [copiedEmail, setCopiedEmail] = useState(false);
+  const copyEmail = () => {
+    navigator.clipboard.writeText('contact@epiclearningpro.com').then(() => {
+      setCopiedEmail(true);
+      setTimeout(() => setCopiedEmail(false), 2000);
+    });
+  };
+
   const scrollTo = (id: string) => {
     setMobileMenuOpen(false);
     const el = document.getElementById(id);
-    if (el) window.scrollTo({ top: el.getBoundingClientRect().top + window.pageYOffset - 80, behavior: "smooth" });
+    const headerEl = document.querySelector('header');
+    const offset = headerEl ? headerEl.offsetHeight : 80;
+    if (el) window.scrollTo({ top: el.getBoundingClientRect().top + window.pageYOffset - offset, behavior: "smooth" });
   };
 
   const navLinks = [
@@ -716,9 +726,10 @@ export default function Home() {
             </FadeIn>
 
             <FadeIn delay={0.3} className="flex flex-col sm:flex-row items-center justify-center gap-4 mt-8">
-              <a href="mailto:contact@epiclearningpro.com" className="inline-flex items-center gap-2 text-white/80 hover:text-white text-sm font-medium transition-colors">
-                <Mail size={16} /> contact@epiclearningpro.com
-              </a>
+              <button onClick={copyEmail} className="inline-flex items-center gap-2 text-white/80 hover:text-white text-sm font-medium transition-colors">
+                {copiedEmail ? <CheckCircle2 size={16} /> : <Mail size={16} />}
+                {copiedEmail ? 'Copied!' : 'contact@epiclearningpro.com'}
+              </button>
               <span className="hidden sm:block text-white/30">·</span>
               <a href="https://www.alignable.com/paulden-az/epic-learning-pro" target="_blank" rel="noopener noreferrer"
                 className="inline-flex items-center gap-2 text-white/80 hover:text-white text-sm font-medium transition-colors">
@@ -740,7 +751,9 @@ export default function Home() {
             </button>
             <div className="flex items-center gap-5 text-sm text-muted-foreground">
               <a href="https://www.alignable.com/paulden-az/epic-learning-pro" target="_blank" rel="noopener noreferrer" className="hover:text-primary transition-colors">Alignable</a>
-              <a href="mailto:contact@epiclearningpro.com" className="hover:text-primary transition-colors">Email</a>
+              <button onClick={copyEmail} className="hover:text-primary transition-colors">
+                {copiedEmail ? 'Copied!' : 'Email'}
+              </button>
             </div>
           </div>
           <div className="border-t border-primary/15 pt-7 flex flex-col sm:flex-row items-center justify-between gap-3 text-sm text-muted-foreground">
