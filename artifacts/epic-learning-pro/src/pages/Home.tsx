@@ -532,8 +532,7 @@ export default function Home() {
               </div>
             </FadeIn>
 
-            <FadeIn delay={0.2} direction="left" className="relative order-first lg:order-last">
-              <div className="absolute inset-0 bg-gradient-to-tr from-primary/20 to-secondary/20 rounded-[2rem] transform rotate-3 scale-105 -z-10" />
+            <FadeIn delay={0.2} direction="left" className="order-first lg:order-last">
               <img src={logoPath} alt="Epic Learning Pro" className="w-full max-w-xs sm:max-w-sm mx-auto rounded-full shadow-2xl bg-white p-4" />
             </FadeIn>
           </div>
