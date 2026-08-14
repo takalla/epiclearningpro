@@ -258,9 +258,9 @@ export default function Home() {
         </AnimatePresence>
       </header>
 
-      {/* ── Hero — purple-blue gradient ── */}
+      {/* ── Hero — purple gradient ── */}
       <section id="hero" className="relative flex items-center h-svh overflow-hidden"
-        style={{ background: 'linear-gradient(135deg, #8B5FE6 0%, #36A6DD 100%)' }}>
+        style={{ background: 'linear-gradient(135deg, #5B2DA8 0%, #8B5FE6 55%, #A472F0 100%)' }}>
         {/* Decorative overlays */}
         <div className="absolute inset-0 pointer-events-none"
           style={{ background: 'radial-gradient(ellipse at top right, rgba(202,167,71,0.2) 0%, transparent 55%)' }} />
@@ -304,7 +304,7 @@ export default function Home() {
       </section>
 
       {/* ── Problem / Agitate — soft lavender tint ── */}
-      <section className="py-16 md:py-28" style={{ background: 'linear-gradient(135deg, #f0eaff 0%, #e8f5ff 100%)' }}>
+      <section className="py-16 md:py-28" style={{ background: 'linear-gradient(135deg, #ede8ff 0%, #e4daff 100%)' }}>
         <div className="container mx-auto px-4 sm:px-6">
           <FadeIn>
             <div className="text-center max-w-3xl mx-auto mb-12 md:mb-16">
@@ -429,7 +429,7 @@ export default function Home() {
 
       {/* ── Social Proof — rich purple, redesigned cards ── */}
       <section id="social-proof" className="py-16 md:py-28 relative overflow-hidden"
-        style={{ background: 'linear-gradient(150deg, #6b3fbf 0%, #8B5FE6 50%, #7a52d4 100%)' }}>
+        style={{ background: 'linear-gradient(150deg, #4a2496 0%, #6b3fbf 40%, #8B5FE6 100%)' }}>
         <div className="absolute inset-0 pointer-events-none"
           style={{ background: 'radial-gradient(ellipse at top right, rgba(54,166,221,0.25) 0%, transparent 55%)' }} />
         <div className="absolute inset-0 pointer-events-none"
@@ -493,7 +493,7 @@ export default function Home() {
                       {/* Reviewer */}
                       <div className="flex items-center gap-3 pt-5 border-t border-border/50">
                         <div className="h-9 w-9 rounded-full flex items-center justify-center font-bold text-sm shrink-0 text-white"
-                          style={{ background: 'linear-gradient(135deg, #8B5FE6, #36A6DD)' }}>
+                          style={{ background: 'linear-gradient(135deg, #5B2DA8, #8B5FE6)' }}>
                           {t.name.charAt(0)}
                         </div>
                         <div>
@@ -511,9 +511,9 @@ export default function Home() {
         </div>
       </section>
 
-      {/* ── About — warm cream gradient ── */}
+      {/* ── About — purple-tinted warm gradient ── */}
       <section id="about" className="py-16 md:py-28"
-        style={{ background: 'linear-gradient(160deg, #fdf7ee 0%, #f4f0ff 50%, #edf6ff 100%)' }}>
+        style={{ background: 'linear-gradient(160deg, #fdf7ee 0%, #ede8ff 50%, #e4daff 100%)' }}>
         <div className="container mx-auto px-4 sm:px-6">
           <div className="grid grid-cols-1 lg:grid-cols-2 gap-10 lg:gap-16 items-center mb-16 md:mb-24">
             <FadeIn direction="right">
@@ -553,7 +553,7 @@ export default function Home() {
                   <div className="relative mb-5 inline-block">
                     <div className="absolute inset-0 bg-primary rounded-full transform translate-y-2 translate-x-2 opacity-0 group-hover:opacity-20 transition-all duration-300" />
                     <img src={member.img} alt={member.name}
-                      className="w-40 h-40 sm:w-44 sm:h-44 md:w-48 md:h-48 object-cover object-center rounded-full shadow-md border-4 border-white relative z-10"
+                      className="w-40 h-40 sm:w-48 sm:h-48 md:w-60 md:h-60 lg:w-64 lg:h-64 object-cover object-center rounded-full shadow-md border-4 border-white relative z-10"
                       data-testid={`img-team-${member.name.split(' ')[0].toLowerCase()}`} />
                   </div>
                   <h4 className="text-lg sm:text-xl font-serif font-semibold">
@@ -570,7 +570,7 @@ export default function Home() {
 
       {/* ── FAQ — warm brand gradient ── */}
       <section id="faq" className="py-16 md:py-28 relative overflow-hidden"
-        style={{ background: 'linear-gradient(135deg, #fdf7ee 0%, #f4efff 50%, #edf6ff 100%)' }}>
+        style={{ background: 'linear-gradient(135deg, #f5f0ff 0%, #ede5ff 50%, #e4daff 100%)' }}>
         <div className="absolute inset-0 pointer-events-none"
           style={{ background: 'radial-gradient(ellipse at top right, rgba(139,95,230,0.08) 0%, transparent 60%)' }} />
 
@@ -610,7 +610,7 @@ export default function Home() {
 
       {/* ── Contact ── */}
       <section id="contact" className="py-16 md:py-28 relative overflow-hidden"
-        style={{ background: 'linear-gradient(135deg, #8B5FE6 0%, #36A6DD 100%)' }}>
+        style={{ background: 'linear-gradient(135deg, #5B2DA8 0%, #8B5FE6 55%, #A472F0 100%)' }}>
         <div className="absolute top-0 right-0 w-full h-full pointer-events-none"
           style={{ background: 'radial-gradient(ellipse at top right, rgba(202,167,71,0.25) 0%, transparent 60%)' }} />
         <div className="absolute bottom-0 left-0 w-full h-full pointer-events-none"
@@ -731,7 +731,7 @@ export default function Home() {
       </section>
 
       {/* ── Footer ── */}
-      <footer className="py-10 sm:py-12" style={{ background: 'linear-gradient(135deg, #f0eaff 0%, #e8f5ff 100%)' }}>
+      <footer className="py-10 sm:py-12" style={{ background: 'linear-gradient(135deg, #ede8ff 0%, #e4daff 100%)' }}>
         <div className="container mx-auto px-4 sm:px-6">
           <div className="flex flex-col sm:flex-row items-center justify-between gap-5 mb-7">
             <button onClick={() => window.scrollTo({ top: 0, behavior: 'smooth' })}

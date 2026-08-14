@@ -40,7 +40,7 @@ jobs:
         env:
           NODE_ENV: production
           PORT: "3000"           # required by Vite config; unused at build time
-          BASE_PATH: "/"         # "/" = custom domain on GitHub Pages
+          BASE_PATH: "/epiclearningpro/"  # matches GitHub Pages subdirectory URL
           VITE_API_URL: ${{ vars.VITE_API_URL }}   # your deployed Replit API URL
 
       - name: Upload Pages artifact
